@@ -7,11 +7,14 @@ import javafx.application.Application;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 
 
 public class BreakoutBallApp extends Application {
@@ -22,6 +25,8 @@ public class BreakoutBallApp extends Application {
     AnchorPane rootPane = new AnchorPane();
     Scene rootScene = new Scene(rootPane, WIDTH, HEIGHT);
     Stage primaryStage;
+    Circle ball = new Circle(5, Paint.valueOf("1500d1"));
+    ArrayList<Rectangle> blocks = new ArrayList<>();
 
     public static void main(String[] args) {
         launch(args);
@@ -40,6 +45,7 @@ public class BreakoutBallApp extends Application {
         });
 
         initializeBall();
+        initializeBlocks();
 
         primaryStage.setResizable(false);
         primaryStage.setScene(rootScene);
@@ -51,42 +57,76 @@ public class BreakoutBallApp extends Application {
     }
 
     private void initializeBall() {
-        Circle ball = new Circle(5, Paint.valueOf("1500d1"));
+//        Circle ball = new Circle(5, Paint.valueOf("1500d1"));
         ball.setLayoutX(WIDTH / 2);
         ball.setLayoutY(HEIGHT - 200);
         rootPane.getChildren().add(ball);
         Bounds bounds = rootPane.getBoundsInParent();
-        System.out.println(bounds.getMaxX());
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), actionEvent -> {
             // move ball
             ball.setLayoutX(ball.getLayoutX() + horizontalMover);
             ball.setLayoutY(ball.getLayoutY() + verticalMover);
-            setMovers(bounds, ball);
+            setMovers(bounds);
+//            if ball.getBoundsInParent().intersects(brick)
+            blocks.removeIf(block -> checkBallHitBlock(block));
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
 
-    void setMovers(Bounds bounds, Circle ball){
-        if (ball.getLayoutX() >= bounds.getMaxX()) {
+    void setMovers(Bounds bounds) {
+        if (ball.getLayoutX() > bounds.getMaxX()) {
 //            hits right wall
             horizontalMover *= -1;
+            return;
+
         }
 
-        if (ball.getLayoutX() <= bounds.getMinX()){
+        if (ball.getLayoutX() <= bounds.getMinX()) {
 //            hits left wall
             horizontalMover *= -1;
+            return;
+
         }
 
-        if (ball.getLayoutY() >= bounds.getMaxY()){
+        if (ball.getLayoutY() >= bounds.getMaxY()) {
+//            hits bottom wall
+            if (ball.getLayoutY() >= HEIGHT){
+//                TODO end game
+//                System.out.println("bottom of scene");
+//                return;
+            }
+            verticalMover *= -1;
+            return;
+        }
+
+        if (ball.getLayoutY() <= bounds.getMinY()) {
 //            hits top wall
             verticalMover *= -1;
+            return;
         }
+    }
 
-        if (ball.getLayoutY() <= bounds.getMinY()){
-//            hits bottom wall
-            verticalMover *= -1;
+    void initializeBlocks() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 16; j++) {
+                Rectangle block = new Rectangle(50, 50, Color.DARKBLUE);
+                block.setLayoutX(block.getLayoutX() + (j * 60) + 25);
+                block.setLayoutY(block.getLayoutY() + (i * 60) + 25);
+                blocks.add(block);
+                rootPane.getChildren().add(block);
+            }
         }
+    }
+
+    boolean checkBallHitBlock(Rectangle block){
+
+        if (ball.getBoundsInParent().intersects(block.getBoundsInParent())) {
+            rootPane.getChildren().remove(block);
+            setMovers(block.getBoundsInParent());
+            return true;
+        }
+        return false;
     }
 }
