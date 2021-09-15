@@ -5,12 +5,19 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
+import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -20,8 +27,9 @@ import java.util.ArrayList;
 public class BreakoutBallApp extends Application {
     final int WIDTH = 1000;
     final int HEIGHT = 650;
-    double horizontalMover = 1.5;
-    double verticalMover = -1.5;
+    double horizontalMover = 15.5;
+    double verticalMover = -15.5;
+
     AnchorPane rootPane = new AnchorPane();
     Scene rootScene = new Scene(rootPane, WIDTH, HEIGHT);
     Stage primaryStage;
@@ -67,9 +75,13 @@ public class BreakoutBallApp extends Application {
             // move ball
             ball.setLayoutX(ball.getLayoutX() + horizontalMover);
             ball.setLayoutY(ball.getLayoutY() + verticalMover);
-            setMovers(bounds);
-//            if ball.getBoundsInParent().intersects(brick)
             blocks.removeIf(block -> checkBallHitBlock(block));
+            setMovers(bounds);
+            if(blocks.isEmpty()){
+//                win
+                endGame();
+                showWinningMessage();
+            };
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
@@ -94,6 +106,7 @@ public class BreakoutBallApp extends Application {
 //            hits bottom wall
             if (ball.getLayoutY() >= HEIGHT){
 //                TODO end game
+
 //                System.out.println("bottom of scene");
 //                return;
             }
@@ -106,6 +119,25 @@ public class BreakoutBallApp extends Application {
             verticalMover *= -1;
             return;
         }
+    }
+
+
+    void endGame(){
+        horizontalMover = 0;
+        verticalMover = 0;
+    }
+
+    void showWinningMessage(){
+//        Rectangle container = new Pane;
+        Text message = new Text("Congrats! You win");
+        StackPane container = new StackPane();
+        container.setMinWidth(WIDTH);
+        container.setLayoutY(HEIGHT / 2);
+//        container.setBackground(new Background(new BackgroundFill(Color.TURQUOISE, CornerRadii.EMPTY, Insets.EMPTY)));
+        container.getChildren().add(message);
+        message.setFont(new Font(25));
+
+        rootPane.getChildren().add(container);
     }
 
     void initializeBlocks() {
@@ -129,4 +161,6 @@ public class BreakoutBallApp extends Application {
         }
         return false;
     }
+
+
 }
