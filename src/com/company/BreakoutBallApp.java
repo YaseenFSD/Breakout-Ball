@@ -138,6 +138,8 @@ public class BreakoutBallApp extends Application {
             ball.setLayoutY(ball.getLayoutY() + verticalMover);
             blocks.removeIf(block -> checkBallHitBlock(block));
             setMovers(bounds);
+            checkPaddleCollision();
+
             if(blocks.isEmpty()){
 //                win
                 endGame();
@@ -147,6 +149,15 @@ public class BreakoutBallApp extends Application {
         mainTimeLine = timeline;
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
+
+    private void checkPaddleCollision() {
+        if (ball.getBoundsInParent().intersects(paddleBar.getBoundsInParent())) {
+
+            setMovers(paddleBar.getBoundsInParent());
+          
+        }
+
     }
 
 
@@ -182,6 +193,8 @@ public class BreakoutBallApp extends Application {
             verticalMover *= -1;
             return;
         }
+
+
     }
 
 
