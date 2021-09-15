@@ -6,9 +6,8 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
-import javafx.geometry.VPos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -16,8 +15,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -27,14 +24,18 @@ import java.util.ArrayList;
 public class BreakoutBallApp extends Application {
     final int WIDTH = 1000;
     final int HEIGHT = 650;
-    double horizontalMover = 15.5;
-    double verticalMover = -15.5;
+    double horizontalMover = 2;
+    double verticalMover = -2;
+    final double INIT_H_MOVER = horizontalMover;
+    final double INIT_V_MOVER = verticalMover;
 
     AnchorPane rootPane = new AnchorPane();
+    StackPane endGameContainer = new StackPane();
     Scene rootScene = new Scene(rootPane, WIDTH, HEIGHT);
     Stage primaryStage;
     Circle ball = new Circle(5, Paint.valueOf("1500d1"));
     ArrayList<Rectangle> blocks = new ArrayList<>();
+    Timeline mainTimeLine;
 
     public static void main(String[] args) {
         launch(args);
@@ -57,6 +58,7 @@ public class BreakoutBallApp extends Application {
 
         primaryStage.setResizable(false);
         primaryStage.setScene(rootScene);
+        rootPane.getChildren().add(endGameContainer);
         primaryStage.show();
     }
 
@@ -66,6 +68,9 @@ public class BreakoutBallApp extends Application {
 
     private void initializeBall() {
 //        Circle ball = new Circle(5, Paint.valueOf("1500d1"));
+        if (rootPane.getChildren().contains(ball)) {
+            rootPane.getChildren().remove(ball);
+        }
         ball.setLayoutX(WIDTH / 2);
         ball.setLayoutY(HEIGHT - 200);
         rootPane.getChildren().add(ball);
@@ -80,9 +85,10 @@ public class BreakoutBallApp extends Application {
             if(blocks.isEmpty()){
 //                win
                 endGame();
-                showWinningMessage();
+                showEndMessage("Congrats! You win");
             };
         }));
+        mainTimeLine = timeline;
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
@@ -106,9 +112,9 @@ public class BreakoutBallApp extends Application {
 //            hits bottom wall
             if (ball.getLayoutY() >= HEIGHT){
 //                TODO end game
-
-//                System.out.println("bottom of scene");
-//                return;
+                endGame();
+                showEndMessage("Oh no you lost");
+                return;
             }
             verticalMover *= -1;
             return;
@@ -123,21 +129,38 @@ public class BreakoutBallApp extends Application {
 
 
     void endGame(){
-        horizontalMover = 0;
-        verticalMover = 0;
+        mainTimeLine.stop();
+        verticalMover = INIT_V_MOVER;
+        horizontalMover = INIT_H_MOVER;
+        showRetryButton();
     }
 
-    void showWinningMessage(){
-//        Rectangle container = new Pane;
-        Text message = new Text("Congrats! You win");
-        StackPane container = new StackPane();
-        container.setMinWidth(WIDTH);
-        container.setLayoutY(HEIGHT / 2);
-//        container.setBackground(new Background(new BackgroundFill(Color.TURQUOISE, CornerRadii.EMPTY, Insets.EMPTY)));
-        container.getChildren().add(message);
+
+    void showEndMessage(String str){
+        Text message = new Text(str);
+
+        endGameContainer.setMinWidth(WIDTH);
+        endGameContainer.setLayoutY(HEIGHT / 2);
+//        endGameContainer.setMinHeight(200);
+//        endGameContainer.setBackground(new Background(new BackgroundFill(Color.TURQUOISE, CornerRadii.EMPTY, Insets.EMPTY)));
+        endGameContainer.getChildren().add(message);
         message.setFont(new Font(25));
 
-        rootPane.getChildren().add(container);
+    }
+
+
+    void showRetryButton(){
+        Button btn = new Button();
+        btn.setText("Replay");
+        btn.setTranslateY(70 + btn.getTranslateY());
+//        btn.set();
+        System.out.println("testing");
+        endGameContainer.getChildren().add(btn);
+        btn.setOnAction(e -> {
+            endGameContainer.getChildren().clear();
+            initializeBlocks();
+            initializeBall();
+        });
     }
 
     void initializeBlocks() {
