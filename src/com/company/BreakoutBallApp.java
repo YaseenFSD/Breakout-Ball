@@ -33,6 +33,8 @@ public class BreakoutBallApp extends Application {
     StackPane endGameContainer = new StackPane();
     Scene rootScene = new Scene(rootPane, WIDTH, HEIGHT);
     Stage primaryStage;
+    //Setting the properties of the rectangle
+    Rectangle paddleBar = new Rectangle();
     Circle ball = new Circle(5, Paint.valueOf("1500d1"));
     ArrayList<Rectangle> blocks = new ArrayList<>();
     Timeline mainTimeLine;
@@ -52,7 +54,7 @@ public class BreakoutBallApp extends Application {
             System.out.println(e.getCode());
 //            System.out.println("");
         });
-
+        initializeBar();
         initializeBall();
         initializeBlocks();
 
@@ -64,7 +66,61 @@ public class BreakoutBallApp extends Application {
 
     private void initializeBar() {
 
+        paddleBar.setX(150.0f);
+        paddleBar.setY(620.0f);
+        paddleBar.setWidth(250.0f);
+        paddleBar.setHeight(30.0f);
+
+        paddleBar.setArcHeight(15);
+        paddleBar.setArcWidth(15);
+        //Setting other properties
+        paddleBar.setFill(Color.DARKCYAN);
+        paddleBar.setStrokeWidth(2.0);
+        paddleBar.setStroke(Color.DARKSLATEGREY);
+        rootPane.getChildren().addAll(paddleBar);
+
+
+        rootScene.setOnKeyPressed(e -> {
+            switch (e.getCode()){
+                case RIGHT:
+                    while(paddleCollisionRightWall()) {
+                        paddleBar.setX(paddleBar.getX() + 15);
+                        break;
+                    }
+
+                    break;
+                case LEFT:
+
+                    while(paddleCollisionLeftWall()) {
+                        paddleBar.setX(paddleBar.getX() - 15);
+                        break;
+                    }
+
+
+            }
+            System.out.println(e.getCode());
+//            System.out.println("");
+        });
     }
+
+    private boolean paddleCollisionLeftWall() {
+        if (paddleBar.getX() >  5){
+            System.out.println(paddleBar.getX()+ " " + rootPane.getLayoutX());
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    private boolean paddleCollisionRightWall() {
+        if (paddleBar.getX() <= 740){
+            System.out.println(paddleBar.getX()+ " " + rootPane.getLayoutX());
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 
     private void initializeBall() {
 //        Circle ball = new Circle(5, Paint.valueOf("1500d1"));
@@ -82,6 +138,8 @@ public class BreakoutBallApp extends Application {
             ball.setLayoutY(ball.getLayoutY() + verticalMover);
             blocks.removeIf(block -> checkBallHitBlock(block));
             setMovers(bounds);
+            checkPaddleCollision();
+
             if(blocks.isEmpty()){
 //                win
                 endGame();
@@ -92,6 +150,16 @@ public class BreakoutBallApp extends Application {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
+
+    private void checkPaddleCollision() {
+        if (ball.getBoundsInParent().intersects(paddleBar.getBoundsInParent())) {
+
+            setMovers(paddleBar.getBoundsInParent());
+          
+        }
+
+    }
+
 
     void setMovers(Bounds bounds) {
         if (ball.getLayoutX() > bounds.getMaxX()) {
@@ -125,6 +193,8 @@ public class BreakoutBallApp extends Application {
             verticalMover *= -1;
             return;
         }
+
+
     }
 
 
