@@ -167,7 +167,7 @@ public class BreakoutBallApp extends Application {
             if(blocks.isEmpty()){
 //                win
                 endGame();
-                showEndMessage("Congrats! You win");
+                showEndMessage("Congrats! You win \n Your score is " + scoreAdd);
             };
         }));
         mainTimeLine = timeline;
@@ -205,7 +205,7 @@ public class BreakoutBallApp extends Application {
             if (ball.getLayoutY() >= HEIGHT){
 //                TODO end game
                 endGame();
-                showEndMessage("Oh no you lost");
+                showEndMessage("Oh no you lost \n Your score is " + scoreAdd);
                 return;
             }
             verticalMover *= -1;
