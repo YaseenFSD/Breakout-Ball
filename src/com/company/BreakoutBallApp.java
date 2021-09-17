@@ -224,11 +224,12 @@ public class BreakoutBallApp extends Application {
         btn.setText("Replay");
         btn.setTranslateY(70 + btn.getTranslateY());
 //        btn.set();
-        System.out.println("testing");
         endGameContainer.getChildren().add(btn);
         btn.setOnAction(e -> {
             blocks.clear();
             rootPane.getChildren().clear();
+            rootPane.getChildren().add(endGameContainer);
+            endGameContainer.getChildren().clear();
             initializeBlocks();
             initializeBall();
             initializeBar();
