@@ -251,12 +251,13 @@ public class BreakoutBallApp extends Application {
         System.out.println("testing");
         endGameContainer.getChildren().add(btn);
         btn.setOnAction(e -> {
+
             endGameContainer.getChildren().clear();
             initializeBlocks();
             initializeBall();
-scoreAdd = 0;
-text.setText(String.valueOf(scoreAdd));
-            //new BreakoutBallApp();
+            scoreAdd = 0;
+            text.setText(String.valueOf(scoreAdd));
+           
         });
     }
 
