@@ -5,10 +5,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Bounds;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -36,6 +34,7 @@ public class BreakoutBallApp extends Application {
     Text text = new Text();
     Scene rootScene = new Scene(rootPane, WIDTH, HEIGHT);
     Stage primaryStage;
+
     //Setting the properties of the rectangle
     Rectangle paddleBar = new Rectangle();
     Circle ball = new Circle(5, Paint.valueOf("1500d1"));
@@ -55,9 +54,8 @@ public class BreakoutBallApp extends Application {
 
         rootScene.setOnKeyPressed(e -> {
             System.out.println(e.getCode());
-//            System.out.println("");
         });
-        scorecard();
+        initializeScore();
         initializeBar();
         initializeBall();
         initializeBlocks();
@@ -70,7 +68,7 @@ public class BreakoutBallApp extends Application {
     }
 
     // score
-    private void scorecard(){
+    private void initializeScore(){
         Text score = new Text();
         score.setX(850);
         score.setY(15);
@@ -87,7 +85,6 @@ public class BreakoutBallApp extends Application {
         text.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
         rootPane.getChildren().add(text);
     }
-// initialize paddle bar
     private void initializeBar() {
 
         paddleBar.setX(150.0f);
@@ -122,14 +119,11 @@ public class BreakoutBallApp extends Application {
 
 
             }
-            System.out.println(e.getCode());
-//            System.out.println("");
         });
     }
 // when paddle hits left side of wall it stops
     private boolean paddleCollisionLeftWall() {
         if (paddleBar.getX() >  5){
-            System.out.println(paddleBar.getX()+ " " + rootPane.getLayoutX());
             return true;
         }else {
             return false;
@@ -138,16 +132,13 @@ public class BreakoutBallApp extends Application {
     // when paddle hits right side of wall it stops
     private boolean paddleCollisionRightWall() {
         if (paddleBar.getX() <= 740){
-            System.out.println(paddleBar.getX()+ " " + rootPane.getLayoutX());
             return true;
         }else {
             return false;
         }
     }
 
-// initialize ball
     private void initializeBall() {
-//        Circle ball = new Circle(5, Paint.valueOf("1500d1"));
         if (rootPane.getChildren().contains(ball)) {
             rootPane.getChildren().remove(ball);
         }
@@ -203,9 +194,8 @@ public class BreakoutBallApp extends Application {
         if (ball.getLayoutY() >= bounds.getMaxY()) {
 //            hits bottom wall
             if (ball.getLayoutY() >= HEIGHT){
-//                TODO end game
                 endGame();
-                showEndMessage("Oh no you lost \n Your score is " + scoreAdd);
+                showEndMessage("Oh no you lost");
                 return;
             }
             verticalMover *= -1;
@@ -247,14 +237,16 @@ public class BreakoutBallApp extends Application {
         Button btn = new Button();
         btn.setText("Replay");
         btn.setTranslateY(70 + btn.getTranslateY());
-//        btn.set();
-        System.out.println("testing");
         endGameContainer.getChildren().add(btn);
         btn.setOnAction(e -> {
-
+            blocks.clear();
+            rootPane.getChildren().clear();
+            rootPane.getChildren().add(endGameContainer);
             endGameContainer.getChildren().clear();
+            initializeScore();
             initializeBlocks();
             initializeBall();
+            initializeBar();
             scoreAdd = 0;
             text.setText(String.valueOf(scoreAdd));
            
