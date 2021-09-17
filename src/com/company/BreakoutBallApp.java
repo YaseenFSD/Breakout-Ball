@@ -98,14 +98,14 @@ public class BreakoutBallApp extends Application {
 
 
             }
-            System.out.println(e.getCode());
+//            System.out.println(e.getCode());
 //            System.out.println("");
         });
     }
 
     private boolean paddleCollisionLeftWall() {
         if (paddleBar.getX() >  5){
-            System.out.println(paddleBar.getX()+ " " + rootPane.getLayoutX());
+//            System.out.println(paddleBar.getX()+ " " + rootPane.getLayoutX());
             return true;
         }else {
             return false;
@@ -114,7 +114,7 @@ public class BreakoutBallApp extends Application {
 
     private boolean paddleCollisionRightWall() {
         if (paddleBar.getX() <= 740){
-            System.out.println(paddleBar.getX()+ " " + rootPane.getLayoutX());
+//            System.out.println(paddleBar.getX()+ " " + rootPane.getLayoutX());
             return true;
         }else {
             return false;
@@ -179,7 +179,6 @@ public class BreakoutBallApp extends Application {
         if (ball.getLayoutY() >= bounds.getMaxY()) {
 //            hits bottom wall
             if (ball.getLayoutY() >= HEIGHT){
-//                TODO end game
                 endGame();
                 showEndMessage("Oh no you lost");
                 return;
@@ -199,6 +198,7 @@ public class BreakoutBallApp extends Application {
 
 
     void endGame(){
+//        endGameContainer.getChildren().clear();
         mainTimeLine.stop();
         verticalMover = INIT_V_MOVER;
         horizontalMover = INIT_H_MOVER;
@@ -227,9 +227,11 @@ public class BreakoutBallApp extends Application {
         System.out.println("testing");
         endGameContainer.getChildren().add(btn);
         btn.setOnAction(e -> {
-            endGameContainer.getChildren().clear();
+            blocks.clear();
+            rootPane.getChildren().clear();
             initializeBlocks();
             initializeBall();
+            initializeBar();
         });
     }
 
