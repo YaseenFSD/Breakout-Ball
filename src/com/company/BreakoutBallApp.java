@@ -8,12 +8,14 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -28,9 +30,10 @@ public class BreakoutBallApp extends Application {
     double verticalMover = -2;
     final double INIT_H_MOVER = horizontalMover;
     final double INIT_V_MOVER = verticalMover;
-
+    static int scoreAdd = 0;
     AnchorPane rootPane = new AnchorPane();
     StackPane endGameContainer = new StackPane();
+    Text text = new Text();
     Scene rootScene = new Scene(rootPane, WIDTH, HEIGHT);
     Stage primaryStage;
     //Setting the properties of the rectangle
@@ -54,9 +57,11 @@ public class BreakoutBallApp extends Application {
             System.out.println(e.getCode());
 //            System.out.println("");
         });
+        scorecard();
         initializeBar();
         initializeBall();
         initializeBlocks();
+
 
         primaryStage.setResizable(false);
         primaryStage.setScene(rootScene);
@@ -64,6 +69,25 @@ public class BreakoutBallApp extends Application {
         primaryStage.show();
     }
 
+    // score
+    private void scorecard(){
+        Text score = new Text();
+        score.setX(850);
+        score.setY(15);
+        score.setText("Score :");
+        score.setFill(Color.RED);
+        score.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        rootPane.getChildren().add(score);
+
+
+        text.setX(940);
+        text.setY(15);
+        text.setText(String.valueOf(scoreAdd));
+        text.setFill(Color.RED);
+        text.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        rootPane.getChildren().add(text);
+    }
+// initialize paddle bar
     private void initializeBar() {
 
         paddleBar.setX(150.0f);
@@ -102,7 +126,7 @@ public class BreakoutBallApp extends Application {
 //            System.out.println("");
         });
     }
-
+// when paddle hits left side of wall it stops
     private boolean paddleCollisionLeftWall() {
         if (paddleBar.getX() >  5){
             System.out.println(paddleBar.getX()+ " " + rootPane.getLayoutX());
@@ -111,7 +135,7 @@ public class BreakoutBallApp extends Application {
             return false;
         }
     }
-
+    // when paddle hits right side of wall it stops
     private boolean paddleCollisionRightWall() {
         if (paddleBar.getX() <= 740){
             System.out.println(paddleBar.getX()+ " " + rootPane.getLayoutX());
@@ -121,7 +145,7 @@ public class BreakoutBallApp extends Application {
         }
     }
 
-
+// initialize ball
     private void initializeBall() {
 //        Circle ball = new Circle(5, Paint.valueOf("1500d1"));
         if (rootPane.getChildren().contains(ball)) {
@@ -150,7 +174,7 @@ public class BreakoutBallApp extends Application {
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
-
+// check ball collide with paddle bar
     private void checkPaddleCollision() {
         if (ball.getBoundsInParent().intersects(paddleBar.getBoundsInParent())) {
 
@@ -230,6 +254,9 @@ public class BreakoutBallApp extends Application {
             endGameContainer.getChildren().clear();
             initializeBlocks();
             initializeBall();
+scoreAdd = 0;
+text.setText(String.valueOf(scoreAdd));
+            //new BreakoutBallApp();
         });
     }
 
@@ -250,6 +277,8 @@ public class BreakoutBallApp extends Application {
         if (ball.getBoundsInParent().intersects(block.getBoundsInParent())) {
             rootPane.getChildren().remove(block);
             setMovers(block.getBoundsInParent());
+            scoreAdd += 10;
+            text.setText(String.valueOf(scoreAdd));
             return true;
         }
         return false;
